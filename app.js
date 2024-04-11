@@ -23,7 +23,7 @@ if (process.env.NODE_ENV === "development") {
 }
 
 // entpoint
-app.get("/", (req, res) => {
+app.get("/api/v1/test", (req, res) => {
   res.status(200).json({
     mesagge: "Pesan dari entpoint express",
   });
