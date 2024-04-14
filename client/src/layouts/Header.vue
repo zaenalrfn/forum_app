@@ -15,8 +15,15 @@
 import Menubar from "primevue/menubar";
 import FormAuthComponent from "@/components/FormAuthComponent.vue";
 import { ref } from "vue";
+import { storeToRefs } from "pinia";
+import { useAuthStores } from "@/stores/authStores.js";
 
-const dialog = ref(false);
+// tampung didalam variabel
+const authStores = useAuthStores();
+
+// State pinia
+const { dialog } = storeToRefs(authStores);
+
 const items = ref([
   {
     label: "Home",
