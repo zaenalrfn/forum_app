@@ -1,8 +1,25 @@
 <template>
   <div>
-    <Menubar class="bg-primary-500 border-noround" :model="items">
+    <Menubar
+      class="bg-primary-500 border-noround flex justify-content-between"
+      :model="items"
+    >
       <template #end>
-        <Button label="Login" icon="pi pi-user" @click="dialog = true" />
+        <Button
+          label="Login"
+          v-if="!authStores.currentUser"
+          icon="pi pi-user"
+          @click="dialog = true"
+        />
+        <div v-else>
+          <Button label="Dashboard" icon="pi pi-home" />
+          <Button
+            label="Logout"
+            @click="LogoutUser"
+            class="ml-3"
+            severity="danger"
+          />
+        </div>
       </template>
     </Menubar>
 
@@ -20,6 +37,9 @@ import { useAuthStores } from "@/stores/authStores.js";
 
 // tampung didalam variabel
 const authStores = useAuthStores();
+
+// Action pinia
+const { LogoutUser } = authStores;
 
 // State pinia
 const { dialog } = storeToRefs(authStores);

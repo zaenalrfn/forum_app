@@ -1,4 +1,4 @@
-import { createApp } from "vue";
+import { createApp, markRaw } from "vue";
 import App from "./App.vue";
 import router from "./router";
 
@@ -20,6 +20,10 @@ const pinia = createPinia();
 app.use(pinia);
 app.use(router);
 app.use(PrimeVue);
+
+pinia.use(({ store }) => {
+  store.router = markRaw(router);
+});
 
 // component PrimeVue
 app.component("InputText", InputText);
