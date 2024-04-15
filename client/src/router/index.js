@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import DashboardView from "@/views/DashboardView.vue";
+import { useAuthStores } from "@/stores/authStores.js";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -22,8 +23,24 @@ const router = createRouter({
       path: "/dashboard",
       name: "Dashboard",
       component: DashboardView,
+      meta: {
+        requiredAuth: true,
+      },
     },
   ],
+});
+
+// sebelum routernya yang diatas dijalankan sistem akan menjalankan beforeEachnya dulu
+// ketika url di ubah ke halaman lain, ketika user belum login
+router.beforeEach(async (to, from) => {
+  const authStores = await useAuthStores();
+  // mengamankan dengan meta
+  if (to.meta.requiredAuth && !authStores.currentUser) {
+    alert("Anda harus login dulu untuk mengakses halaman ini");
+    return {
+      path: "/",
+    };
+  }
 });
 
 export default router;
