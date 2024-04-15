@@ -48,5 +48,29 @@ export const useAuthStores = defineStore("user", () => {
     }
   };
 
-  return { dialog, LoginUser, errorMsg, errorAlert, currentUser, LogoutUser };
+  // fungsi state Register
+  const RegisterUser = async (inputData) => {
+    // validasi error
+    try {
+      const { data } = await customFetch.post("/auth/register", {
+        name: inputData.name,
+        email: inputData.email,
+        password: inputData.password,
+      });
+
+      currentUser.value = data.data;
+      localStorage.setItem("user", JSON.stringify(data.data));
+      console.log(data);
+      //   untuk menutup dialog
+      dialog.value = false;
+
+      // untuk mengdirect ke halaman dashboard
+      router.push({ name: "Dashboard" });
+    } catch (error) {
+      errorAlert.value = true;
+      errorMsg.value = error.response.data.message;
+    }
+  };
+
+  return { dialog, LoginUser, errorMsg, errorAlert, currentUser, LogoutUser, RegisterUser };
 });
