@@ -2,7 +2,10 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
+// Router
 import authRouter from "./router/authRouter.js";
+import questionRouter from "./router/questionRouter.js";
+
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import { errorHandler, notFound } from "./middleware/errorHandler.js";
@@ -22,15 +25,9 @@ if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
 
-// entpoint
-app.get("/api/v1/test", (req, res) => {
-  res.status(200).json({
-    mesagge: "Pesan dari entpoint express",
-  });
-});
-
 // router utama / router parent
 app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/question", questionRouter);
 
 app.use(notFound);
 app.use(errorHandler);
