@@ -17,12 +17,34 @@ export const CreateQuestion = asyncHandler(async (req, res) => {
   });
 });
 
-export const QuestionAll = (req, res) => {
-  res.send("Tampil semua pertanyaan");
-};
-export const detailQuestion = (req, res) => {
-  res.send("Detail pertanyaan");
-};
+export const QuestionAll = asyncHandler(async (req, res) => {
+  // menampung semua nilai dari questionnya
+  // fungsi find() untuk menampilkan semua document / data
+  const questionsData = await Question.find();
+
+  res.status(200).json({
+    message: "Data pertanyaan berhasil di tampilkan semua",
+    data: questionsData,
+  });
+});
+
+export const detailQuestion = asyncHandler(async (req, res) => {
+  const paramsId = req.params.id;
+  // mencari detail question bedasarkan idnya
+  const DetailQuestion = await Question.findById(paramsId);
+
+  // kondisi jika detail question atau id question tidak ada
+  if (!DetailQuestion) {
+    return res.status(404).json({
+      message: "Id pertanyaan tidak ditemukan",
+    });
+  }
+  // jika detail question atau id question ada
+  return res.status(200).json({
+    message: "Document Id pertanyaan berhasil ditampilkan",
+    data: DetailQuestion,
+  });
+});
 export const updateQuestion = (req, res) => {
   res.send("Update pertanyaan");
 };
