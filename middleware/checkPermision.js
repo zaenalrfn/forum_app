@@ -1,4 +1,4 @@
-export const checkPermision = (requestUser, resourceUserId) => {
+export const checkPermision = (requestUser, resourceUserId, res) => {
   // jika request usernya role == admin
   if (requestUser.role === "admin") {
     return;
@@ -9,5 +9,6 @@ export const checkPermision = (requestUser, resourceUserId) => {
     return;
   }
 
+  res.status(401);
   throw new Error("Anda tidak bisa melakukan update/delete pertanyaan user lain");
 };

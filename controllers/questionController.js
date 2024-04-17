@@ -55,8 +55,14 @@ export const updateQuestion = asyncHandler(async (req, res) => {
   //  mengambil nilai datanya bedasarkan idnya
   const idQuestion = await Question.findById(paramsId);
 
+  // jika id questionnya tidak ditemukan
+  if (!idQuestion) {
+    res.status(404);
+    throw new Error("Pertanyaan id tidak ditemukan");
+  }
+
   // middleware untuk mengecek yang mau edit/delete itu userid yang membuat pertanyaan atau tidak
-  checkPermision(req.user, idQuestion.userId);
+  checkPermision(req.user, idQuestion.userId, res);
 
   //  fungsi update
   idQuestion.title = title;
@@ -71,6 +77,24 @@ export const updateQuestion = asyncHandler(async (req, res) => {
     data: idQuestion,
   });
 });
-export const deleteQuestion = (req, res) => {
-  res.send("Delete pertanyaan");
-};
+
+export const deleteQuestion = asyncHandler(async (req, res) => {
+  const paramsId = req.params.id;
+
+  //  mengambil nilai datanya bedasarkan idnya
+  const idQuestion = await Question.findById(paramsId);
+
+  // jika id questionnya tidak ditemukan
+  if (!idQuestion) {
+    res.status(404);
+    throw new Error("Pertanyaan id tidak ditemukan");
+  }
+
+  checkPermision(req.user, idQuestion.userId, res);
+
+  // code untuk penghapusan data question
+  await Question.findByIdAndDelete(paramsId);
+  return res.status(200).json({
+    message: "Delete pertanyaan berhasil",
+  });
+});
