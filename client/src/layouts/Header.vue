@@ -1,7 +1,7 @@
 <template>
   <div>
     <Menubar
-      class="bg-primary-500 border-noround flex justify-content-between"
+      class="bg-primary border-noround flex justify-content-between"
       :model="items"
     >
       <template #end>
