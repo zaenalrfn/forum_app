@@ -1,5 +1,6 @@
 import Question from "../models/Question.js";
 import asyncHandler from "../middleware/asyncHandler.js";
+import { checkPermision } from "../middleware/checkPermision.js";
 
 export const CreateQuestion = asyncHandler(async (req, res) => {
   const { title, question, kategori } = req.body;
@@ -45,9 +46,31 @@ export const detailQuestion = asyncHandler(async (req, res) => {
     data: DetailQuestion,
   });
 });
-export const updateQuestion = (req, res) => {
-  res.send("Update pertanyaan");
-};
+
+export const updateQuestion = asyncHandler(async (req, res) => {
+  const { title, question, kategori } = req.body;
+
+  const paramsId = req.params.id;
+
+  //  mengambil nilai datanya bedasarkan idnya
+  const idQuestion = await Question.findById(paramsId);
+
+  // middleware untuk mengecek yang mau edit/delete itu userid yang membuat pertanyaan atau tidak
+  checkPermision(req.user, idQuestion.userId);
+
+  //  fungsi update
+  idQuestion.title = title;
+  idQuestion.question = question;
+  idQuestion.kategori = kategori;
+
+  // menyimpan nilainya
+  await idQuestion.save();
+
+  return res.status(200).json({
+    message: "Berhasil update pertanyaan",
+    data: idQuestion,
+  });
+});
 export const deleteQuestion = (req, res) => {
   res.send("Delete pertanyaan");
 };
