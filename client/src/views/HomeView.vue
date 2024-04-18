@@ -23,7 +23,7 @@
           <Dialog
             v-model:visible="dialog"
             modal
-            header="Edit Profile"
+            header="Buat Pertanyaan"
             :style="{ width: '70%' }"
           >
             <span class="p-text-secondary block mb-5"
