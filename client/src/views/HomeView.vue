@@ -11,6 +11,7 @@
           <div class="flex justify-content-between mb-3">
             <h2 class="text-4xl text-primary">List Pertanyaan</h2>
             <Button
+              v-if="authStore.currentUser"
               label="Tambah"
               rounded
               type="button"
@@ -29,13 +30,14 @@
             <span class="p-text-secondary block mb-5"
               >Update your information.</span
             >
-            <FormQuestion @close="closeDialog()" />
+            <FormQuestion @close="closeDialog()" @reload="allQuestion()" />
           </Dialog>
-
-          <ListQuestion />
-          <ListQuestion />
-          <ListQuestion />
-          <ListQuestion />
+          <ListQuestion
+            v-if="question"
+            v-for="q in question"
+            :key="q.id"
+            :data="q"
+          />
         </div>
       </section>
     </div>
@@ -45,12 +47,29 @@
 <script setup>
 import ListQuestion from "@/components/Question/ListQuestion.vue";
 import Dialog from "primevue/dialog";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import FormQuestion from "@/components/Question/FormQuestion.vue";
+import customFetch from "@/api";
+import { useAuthStores } from "@/stores/authStores.js";
 
+const question = ref("");
 const dialog = ref(false);
+const authStore = useAuthStores();
+
+const allQuestion = async () => {
+  try {
+    const { data } = await customFetch.get("/question");
+    question.value = data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const closeDialog = () => {
   dialog.value = false;
 };
+
+onMounted(() => {
+  allQuestion();
+});
 </script>
