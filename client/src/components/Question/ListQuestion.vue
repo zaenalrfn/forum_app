@@ -25,9 +25,11 @@
             }}</span>
           </div>
         </template>
-        <router-link to="/" class="text-4xl text-primary no-underline">{{
-          props.data.title
-        }}</router-link>
+        <router-link
+          :to="{ name: 'DetailQuestion', params: { id: props.data._id } }"
+          class="text-4xl text-primary no-underline"
+          >{{ props.data.title }}</router-link
+        >
         <p class="my-3">
           <!-- substring = untuk membatasi huruf, yang ditampilkan hanya 200 karakter aja -->
           <span v-html="props.data.question.substring(0, 200)"></span>
