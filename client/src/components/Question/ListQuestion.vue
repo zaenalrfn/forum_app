@@ -12,6 +12,12 @@
             <span class="font-bold">Amy Elsner</span>
           </div>
         </template>
+        <template #icons>
+          <button class="p-panel-header-icon p-link mr-2" @click="toggle">
+            <span class="pi pi-cog"></span>
+          </button>
+          <Menu ref="menu" id="config_menu" :model="items" popup />
+        </template>
         <template #footer>
           <div
             class="flex flex-wrap align-items-center justify-content-between gap-3"
@@ -44,6 +50,42 @@
 import Panel from "primevue/panel";
 import Avatar from "primevue/avatar";
 import Chip from "primevue/chip";
+import Menu from "primevue/menu";
+import { ref } from "vue";
+
+const menu = ref(null);
+
+const items = ref([
+  {
+    label: "Update",
+    icon: "pi pi-refresh",
+    command: () => {
+      const data = props.data;
+      console.log(data);
+    },
+  },
+  {
+    label: "Delete",
+    icon: "pi pi-times",
+    command: () => {
+      console.log("Delete");
+    },
+  },
+  {
+    separator: true,
+  },
+  {
+    label: "Report",
+    icon: "pi pi-flag",
+    command: () => {
+      console.log("Report");
+    },
+  },
+]);
+
+const toggle = (event) => {
+  menu.value.toggle(event);
+};
 
 const dataFormat = (dataInput) => {
   const newDate = new Date(dataInput).toLocaleString();
