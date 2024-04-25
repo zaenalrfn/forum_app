@@ -12,11 +12,19 @@
             <span class="font-bold">Amy Elsner</span>
           </div>
         </template>
+
         <template #icons>
-          <button class="p-panel-header-icon p-link mr-2" @click="toggle">
-            <span class="pi pi-cog"></span>
-          </button>
-          <Menu ref="menu" id="config_menu" :model="items" popup />
+          <div
+            v-if="
+              authStore.currentUser &&
+              authStore.currentUser._id == props.data.userId
+            "
+          >
+            <button class="p-panel-header-icon p-link mr-2" @click="toggle">
+              <span class="pi pi-cog"></span>
+            </button>
+            <Menu ref="menu" id="config_menu" :model="items" popup />
+          </div>
         </template>
         <template #footer>
           <div
@@ -71,8 +79,11 @@ import Chip from "primevue/chip";
 import Menu from "primevue/menu";
 import { ref } from "vue";
 import FormQuestion from "./FormQuestion.vue";
+import { useAuthStores } from "@/stores/authStores.js";
+import customFetch from "@/api";
 
 const emit = defineEmits(["reload"]);
+const authStore = useAuthStores();
 
 const dialog = ref(false);
 const menu = ref(null);
@@ -95,8 +106,10 @@ const items = ref([
   {
     label: "Delete",
     icon: "pi pi-times",
-    command: () => {
-      console.log("Delete");
+    command: async () => {
+      await customFetch.delete(`question/${props.data._id}`);
+      alert("Berhasil hapus pertanyaan");
+      emit("reload");
     },
   },
   {
