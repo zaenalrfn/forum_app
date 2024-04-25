@@ -18,8 +18,8 @@
         <Editor
           editorStyle="height: 320px"
           style="width: 100%"
-          placeholder="Masukkan pertanyaan kamu"
           v-model="question.question"
+          placeholder="Masukkan pertanyaan kamu"
         />
       </div>
       <div class="flex align-items-center gap-3 mb-3">
@@ -44,15 +44,33 @@
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import customFetch from "@/api";
 import AlertMessage from "../AlertMessage.vue";
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["close"], ["reload"]);
+const props = defineProps({
+  dataQuestion: {
+    type: Object,
+    required: true,
+  },
+  isUpdate: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+onMounted(() => {
+  if (props.dataQuestion && props.isUpdate) {
+    question.title = props.dataQuestion.title;
+    question.question = props.dataQuestion.question;
+    question.kategori = props.dataQuestion.kategori;
+  }
+});
 
 const question = reactive({
   title: "",
-  question: "",
+  question: props.isUpdate ? props.dataQuestion.question : "",
   kategori: "",
 });
 
@@ -68,16 +86,24 @@ const clearInput = () => {
 
 const handleSubmit = async () => {
   try {
-    const questionData = await customFetch.post("/question", {
-      title: question.title,
-      question: question.question,
-      kategori: question.kategori,
-    });
-    if (questionData) {
-      clearInput();
-      emit("close");
-      emit("reload");
+    if (props.isUpdate) {
+      // Update Data
+      await customFetch.put(`/question/${props.dataQuestion._id}`, {
+        title: question.title,
+        question: question.question,
+        kategori: question.kategori,
+      });
+    } else {
+      // Tambah Data
+      await customFetch.post("/question", {
+        title: question.title,
+        question: question.question,
+        kategori: question.kategori,
+      });
     }
+    clearInput();
+    emit("close");
+    emit("reload");
   } catch (error) {
     errorAlert.value = true;
     errorMessage.value = error.response.data.message;

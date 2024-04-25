@@ -28,15 +28,16 @@
             :style="{ width: '70%' }"
           >
             <span class="p-text-secondary block mb-5"
-              >Update your information.</span
+              >Tambah your information.</span
             >
             <FormQuestion @close="closeDialog()" @reload="allQuestion()" />
           </Dialog>
           <ListQuestion
-            v-if="question"
-            v-for="q in question"
+            v-if="questions"
+            v-for="q in questions"
             :key="q.id"
             :data="q"
+            @reload="allQuestion()"
           />
           <LoadingSpinner v-else />
         </div>
@@ -54,14 +55,14 @@ import customFetch from "@/api";
 import { useAuthStores } from "@/stores/authStores.js";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
 
-const question = ref("");
+const questions = ref("");
 const dialog = ref(false);
 const authStore = useAuthStores();
 
 const allQuestion = async () => {
   try {
     const { data } = await customFetch.get("/question");
-    question.value = data.data;
+    questions.value = data.data;
   } catch (error) {
     console.log(error);
   }

@@ -40,6 +40,24 @@
           <!-- substring = untuk membatasi huruf, yang ditampilkan hanya 200 karakter aja -->
           <span v-html="props.data.question.substring(0, 200)"></span>
         </p>
+        <!-- dialog pertanyaan -->
+        <Dialog
+          v-model:visible="dialog"
+          modal
+          header="Update Pertanyaan"
+          :style="{ width: '70%' }"
+        >
+          <span class="p-text-secondary block mb-5"
+            >Update your information.</span
+          >
+          <FormQuestion
+            v-if="dataQuestion"
+            @close="dialog = false"
+            :dataQuestion="dataQuestion"
+            :isUpdate="true"
+            @reload="reload()"
+          />
+        </Dialog>
         <Chip :label="props.data.kategori" />
       </Panel>
     </div>
@@ -52,8 +70,17 @@ import Avatar from "primevue/avatar";
 import Chip from "primevue/chip";
 import Menu from "primevue/menu";
 import { ref } from "vue";
+import FormQuestion from "./FormQuestion.vue";
 
+const emit = defineEmits(["reload"]);
+
+const dialog = ref(false);
 const menu = ref(null);
+const dataQuestion = ref(null);
+
+const reload = () => {
+  emit("reload");
+};
 
 const items = ref([
   {
@@ -61,7 +88,8 @@ const items = ref([
     icon: "pi pi-refresh",
     command: () => {
       const data = props.data;
-      console.log(data);
+      dataQuestion.value = data;
+      dialog.value = true;
     },
   },
   {
