@@ -21,7 +21,36 @@ export const CreateQuestion = asyncHandler(async (req, res) => {
 export const QuestionAll = asyncHandler(async (req, res) => {
   // menampung semua nilai dari questionnya
   // fungsi find() untuk menampilkan semua document / data
-  const questionsData = await Question.find();
+  // const questionsData = await Question.find();
+
+  // ambil semua req query
+  const queryObject = { ...req.query };
+
+  // fungsi untuk mengatasi query apa aja yang diabaikan (page dan sort)
+  const excludeField = ["page", "sort"];
+  excludeField.forEach((element) => delete queryObject[element]);
+
+  // testing console.log
+  // console.log(req.query, queryObject);
+  let query = Question.find(queryObject);
+
+  // bagian pagination // kenapa dikali satu karena req query bernilai string ketika dikali dengan satu akan menjadi int
+  const page = req.query.page * 1 || 1;
+  const limitData = 5;
+  const skipData = (page - 1) * limitData;
+
+  // menambahkan nilai querynya
+  query = query.skip(skipData).limit(limitData);
+
+  // Jika page nya sudah habis / halaman berikutnya sudah tidak ada
+  if (req.query.page) {
+    const jumlahQuestion = await Question.countDocuments();
+    if (skipData >= jumlahQuestion) {
+      throw new Error("Halaman ini tidak ada");
+    }
+  }
+
+  const questionsData = await query;
 
   res.status(200).json({
     message: "Data pertanyaan berhasil di tampilkan semua",
