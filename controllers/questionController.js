@@ -34,6 +34,16 @@ export const QuestionAll = asyncHandler(async (req, res) => {
   // console.log(req.query, queryObject);
   let query = Question.find(queryObject);
 
+  // bagian fungsi sorting pertanyaan bedasarkan field
+  if (req.query.sort) {
+    const sortBy = req.query.sort.split(",").join(" ");
+
+    query = query.sort(sortBy);
+  } else {
+    // filter urutan bedasarkan pertanyaan terbaru
+    query = query.sort("-createdAt");
+  }
+
   // bagian pagination // kenapa dikali satu karena req query bernilai string ketika dikali dengan satu akan menjadi int
   const page = req.query.page * 1 || 1;
   const limitData = 5;
