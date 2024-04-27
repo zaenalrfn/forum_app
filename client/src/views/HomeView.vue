@@ -2,8 +2,40 @@
   <main>
     <div class="grid">
       <aside class="col-2">
-        <div class="text-center p-3 border-round-sm bg-indigo-100 font-bold">
-          Filter
+        <div class="p-3 border-round-sm bg-indigo-100">
+          <form @submit.prevent="test">
+            <div class="flex flex-column gap-2">
+              <p class="font-bold">Kategori</p>
+              <div
+                v-for="kategori in categories"
+                :key="kategori.key"
+                class="flex align-items-center"
+              >
+                <RadioButton
+                  v-model="selectedCategory"
+                  :inputId="kategori.key"
+                  name="kategori"
+                  :value="kategori.name"
+                />
+                <label :for="kategori.key" class="ml-2">{{
+                  kategori.name
+                }}</label>
+              </div>
+            </div>
+            <Divider />
+            <div class="flex my-3">
+              <Dropdown
+                v-model="selectedQuestion"
+                :options="questionFilter"
+                optionLabel="name"
+                optionValue="code"
+                placeholder="Question Filter"
+                class="w-full md:w-14rem"
+              />
+            </div>
+            <Divider />
+            <Button type="submit" label="Filter"></Button>
+          </form>
         </div>
       </aside>
       <section class="col">
@@ -54,6 +86,29 @@ import FormQuestion from "@/components/Question/FormQuestion.vue";
 import customFetch from "@/api";
 import { useAuthStores } from "@/stores/authStores.js";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
+import Divider from "primevue/divider";
+import RadioButton from "primevue/radiobutton";
+import Dropdown from "primevue/dropdown";
+
+const selectedCategory = ref("Production");
+const categories = ref([
+  { name: "javascript", key: "JS" },
+  { name: "database", key: "DB" },
+  { name: "vuejs", key: "VU" },
+  { name: "expressjs", key: "ER" },
+  { name: "backend", key: "BE" },
+]);
+
+const selectedQuestion = ref();
+const questionFilter = ref([
+  { name: "New Question", code: "-createdAt" },
+  { name: "Old Question", code: "createdAt" },
+  { name: "A - Z Question", code: "title" },
+]);
+
+const test = () => {
+  console.log(selectedCategory.value, selectedQuestion.value);
+};
 
 const questions = ref("");
 const dialog = ref(false);
