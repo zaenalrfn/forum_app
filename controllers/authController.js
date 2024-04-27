@@ -78,7 +78,7 @@ export const LogoutUser = (req, res) => {
 export const getUser = async (req, res) => {
   // ambil user yang sudah login
   // password: 0 = tidak menampilkan passwordnya selain itu akan ditampilkan
-  const user = await User.findById(req.user.id).select({ password: 0 });
+  const user = await User.findById(req.user.id).select({ password: 0 }).populate("listQuestion");
   if (user) {
     return res.status(200).json({
       user,

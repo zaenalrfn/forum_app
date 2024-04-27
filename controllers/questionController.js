@@ -32,7 +32,7 @@ export const QuestionAll = asyncHandler(async (req, res) => {
 
   // testing console.log
   // console.log(req.query, queryObject);
-  let query = Question.find(queryObject);
+  let query = Question.find(queryObject).populate("userId", "-password");
 
   // bagian fungsi sorting pertanyaan bedasarkan field
   if (req.query.sort) {
@@ -71,7 +71,7 @@ export const QuestionAll = asyncHandler(async (req, res) => {
 export const detailQuestion = asyncHandler(async (req, res) => {
   const paramsId = req.params.id;
   // mencari detail question bedasarkan idnya
-  const DetailQuestion = await Question.findById(paramsId);
+  const DetailQuestion = await Question.findById(paramsId).populate("userId", "-password");
 
   // kondisi jika detail question atau id question tidak ada
   if (!DetailQuestion) {
