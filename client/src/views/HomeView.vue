@@ -3,7 +3,7 @@
     <div class="grid">
       <aside class="col-2">
         <div class="p-3 border-round-sm bg-indigo-100">
-          <form @submit.prevent="test">
+          <form @submit.prevent="handleFilter">
             <div class="flex flex-column gap-2">
               <p class="font-bold">Kategori</p>
               <div
@@ -72,6 +72,9 @@
             @reload="allQuestion()"
           />
           <LoadingSpinner v-else />
+          <div v-if="questions && !questions.length">
+            <h1>Data tidak ada</h1>
+          </div>
         </div>
       </section>
     </div>
@@ -90,7 +93,7 @@ import Divider from "primevue/divider";
 import RadioButton from "primevue/radiobutton";
 import Dropdown from "primevue/dropdown";
 
-const selectedCategory = ref("Production");
+const selectedCategory = ref(null);
 const categories = ref([
   { name: "javascript", key: "JS" },
   { name: "database", key: "DB" },
@@ -99,24 +102,30 @@ const categories = ref([
   { name: "backend", key: "BE" },
 ]);
 
-const selectedQuestion = ref();
+const selectedQuestion = ref(null);
 const questionFilter = ref([
   { name: "New Question", code: "-createdAt" },
   { name: "Old Question", code: "createdAt" },
   { name: "A - Z Question", code: "title" },
 ]);
 
-const test = () => {
-  console.log(selectedCategory.value, selectedQuestion.value);
+const handleFilter = async () => {
+  await allQuestion();
 };
 
-const questions = ref("");
+const questions = ref(null);
 const dialog = ref(false);
 const authStore = useAuthStores();
 
 const allQuestion = async () => {
   try {
-    const { data } = await customFetch.get("/question");
+    const params = {
+      sort: selectedQuestion.value,
+      kategori: selectedCategory.value,
+    };
+    const { data } = await customFetch.get("/question", {
+      params,
+    });
     questions.value = data.data;
   } catch (error) {
     console.log(error);
