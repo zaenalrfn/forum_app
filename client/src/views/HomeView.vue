@@ -72,6 +72,12 @@
             @reload="allQuestion()"
           />
           <LoadingSpinner v-else />
+          <Paginator
+            v-if="questions && questions.length"
+            :rows="5"
+            :totalRecords="total"
+            @page="onPage"
+          ></Paginator>
           <div v-if="questions && !questions.length">
             <h1>Data tidak ada</h1>
           </div>
@@ -92,6 +98,7 @@ import LoadingSpinner from "@/components/LoadingSpinner.vue";
 import Divider from "primevue/divider";
 import RadioButton from "primevue/radiobutton";
 import Dropdown from "primevue/dropdown";
+import Paginator from "primevue/paginator";
 
 const selectedCategory = ref(null);
 const categories = ref([
@@ -113,20 +120,28 @@ const handleFilter = async () => {
   await allQuestion();
 };
 
+const total = ref(0);
+
+const onPage = (e) => {
+  allQuestion(e.page + 1);
+};
+
 const questions = ref(null);
 const dialog = ref(false);
 const authStore = useAuthStores();
 
-const allQuestion = async () => {
+const allQuestion = async (page = 1) => {
   try {
     const params = {
       sort: selectedQuestion.value,
       kategori: selectedCategory.value,
+      page: page,
     };
     const { data } = await customFetch.get("/question", {
       params,
     });
     questions.value = data.data;
+    total.value = data.total;
   } catch (error) {
     console.log(error);
   }

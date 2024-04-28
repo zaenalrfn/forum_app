@@ -62,9 +62,12 @@ export const QuestionAll = asyncHandler(async (req, res) => {
 
   const questionsData = await query;
 
+  const totalQuestion = await Question.countDocuments(queryObject);
+
   res.status(200).json({
     message: "Data pertanyaan berhasil di tampilkan semua",
     data: questionsData,
+    total: totalQuestion,
   });
 });
 
