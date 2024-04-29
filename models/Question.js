@@ -31,8 +31,17 @@ const questionSchema = new mongoose.Schema(
   {
     // waktu pembuatan nya
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
+
+questionSchema.virtual("listAnswer", {
+  ref: "Answer",
+  localField: "_id",
+  foreignField: "question",
+  justOne: false,
+});
 
 // response schema
 const Question = mongoose.model("Question", questionSchema);

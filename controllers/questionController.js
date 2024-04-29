@@ -74,7 +74,15 @@ export const QuestionAll = asyncHandler(async (req, res) => {
 export const detailQuestion = asyncHandler(async (req, res) => {
   const paramsId = req.params.id;
   // mencari detail question bedasarkan idnya
-  const DetailQuestion = await Question.findById(paramsId).populate("userId", "-password");
+  const DetailQuestion = await Question.findById(paramsId)
+    .populate("userId", "-password")
+    .populate({
+      path: "listAnswer",
+      populate: {
+        path: "user",
+        select: "-password",
+      },
+    });
 
   // kondisi jika detail question atau id question tidak ada
   if (!DetailQuestion) {
