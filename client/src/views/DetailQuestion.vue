@@ -1,7 +1,18 @@
 <template>
   <div>
-    <DetailQuestionComponent v-if="questionData" :data="questionData" />
-    <LoadingSpinner v-else />
+    <div>
+      <DetailQuestionComponent v-if="questionData" :data="questionData" />
+      <LoadingSpinner v-else />
+    </div>
+    <Divider />
+    <div v-if="authStores.currentUser">
+      <h1 class="text-3xl-primary">Jawaban</h1>
+      <!-- Form answer -->
+      <FormAnswerComponent
+        @reload="DetailQuestion()"
+        :data-question="questionData"
+      />
+    </div>
   </div>
 </template>
 
@@ -11,9 +22,14 @@ import { useRoute } from "vue-router";
 import customFetch from "@/api";
 import { ref, onMounted } from "vue";
 import LoadingSpinner from "@/components/LoadingSpinner.vue";
+import Divider from "primevue/divider";
+import FormAnswerComponent from "@/components/Answer/FormAnswer.vue";
+import { useAuthStores } from "@/stores/authStores";
 
 const questionData = ref(null);
 const route = useRoute();
+
+const authStores = useAuthStores();
 
 const DetailQuestion = async () => {
   try {
