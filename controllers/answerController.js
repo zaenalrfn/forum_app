@@ -1,6 +1,7 @@
 import Answer from "../models/Answer.js";
 import Question from "../models/Question.js";
 import asyncHandler from "../middleware/asyncHandler.js";
+import { checkPermision } from "../middleware/checkPermision.js";
 
 export const addAnswer = asyncHandler(async (req, res) => {
   const questionId = req.params.idQuestion;
@@ -19,5 +20,19 @@ export const addAnswer = asyncHandler(async (req, res) => {
   return res.status(200).json({
     message: "Berhasil buat jawaban",
     data: newAnswer,
+  });
+});
+
+export const deleteAnswer = asyncHandler(async (req, res) => {
+  const paramsId = req.params.id;
+
+  const answerData = await Answer.findById(paramsId);
+
+  // jika user sudah benar apakah user tersebut yang membuat jawaban
+  checkPermision(req.user, answerData.user, res);
+  await Answer.findByIdAndDelete(paramsId);
+
+  return res.status(200).json({
+    message: "Berhasil hapus jawaban",
   });
 });

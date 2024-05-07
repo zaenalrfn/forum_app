@@ -27,10 +27,21 @@
                 }}</span>
               </div>
             </template>
-            <p class="my-3">
-              <!-- substring = untuk membatasi huruf, yang ditampilkan hanya 200 karakter aja -->
-              <span v-html="props.data.answer"></span>
-            </p>
+            <div
+              class="mb-3 flex justify-content-end"
+              v-if="
+                authStores.currentUser &&
+                authStores.currentUser._id === props.data.user._id
+              "
+            >
+              <Button
+                icon="pi pi-times"
+                rounded
+                severity="danger"
+                @click="handleDelete(props.data._id)"
+              />
+            </div>
+            <span v-html="props.data.answer"></span>
           </Panel>
         </div>
       </div>
@@ -41,6 +52,22 @@
  <script setup>
 import Panel from "primevue/panel";
 import Avatar from "primevue/avatar";
+import { useAuthStores } from "@/stores/authStores.js";
+import customFetch from "@/api";
+
+const authStores = useAuthStores();
+
+const emit = defineEmits(["reload"]);
+
+const handleDelete = async (paramsId) => {
+  try {
+    await customFetch.delete(`/answer/${paramsId}`);
+    alert("delete berhasil");
+    emit("reload");
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 const dataFormat = (dataInput) => {
   const newDate = new Date(dataInput).toLocaleString();

@@ -1,6 +1,6 @@
 import express from "express";
 import { authMiddleware, permisionUser } from "../middleware/authMiddleware.js";
-import { addAnswer } from "../controllers/answerController.js";
+import { addAnswer, deleteAnswer } from "../controllers/answerController.js";
 
 const router = express.Router();
 
@@ -12,4 +12,7 @@ const router = express.Router();
 // post /api/v1/answer
 router.post("/:idQuestion", authMiddleware, addAnswer);
 
+// Delete document
+// Delete /api/v1/answer/:id
+router.delete("/:id", authMiddleware, deleteAnswer);
 export default router;
