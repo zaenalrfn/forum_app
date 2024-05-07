@@ -9,7 +9,7 @@
               size="large"
               shape="circle"
             />
-            <span class="font-bold">Amy Elsner</span>
+            <span class="font-bold">{{ props.data.userId.name }}</span>
           </div>
         </template>
 
@@ -17,7 +17,7 @@
           <div
             v-if="
               authStore.currentUser &&
-              authStore.currentUser._id == props.data.userId
+              authStore.currentUser._id == props.data.userId._id
             "
           >
             <button class="p-panel-header-icon p-link mr-2" @click="toggle">
